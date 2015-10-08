@@ -120,7 +120,22 @@ public class RenderTreeBuilder {
 	 */
 	public static void rippleTransformations(RenderEnvironment env) {
 		// TODO#A3 SOLUTION START
+		rippleTransRecur(env.root);
+		for (RenderCamera  rc: env.cameras){
+			rc.updateCameraMatrix(env.viewportSize);
+		}		
+	}
+	
+	private static void rippleTransRecur(RenderObject current){
+		if (current.parent != null){
+			current.mWorldTransform.set(current.sceneObject.transformation).mulAfter(current.parent.mWorldTransform);
+			current.mWorldTransformIT.set(current.mWorldTransform.getAxes()).invert().transpose();
 		}
+		for (RenderObject nod: current.children){
+			rippleTransRecur(nod);
+		}
+	}
+	
 	// SOLUTION END
 	
 	/**

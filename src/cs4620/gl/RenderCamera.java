@@ -59,15 +59,28 @@ public class RenderCamera extends RenderObject {
 		// TODO#A3 SOLUTION START
 
 		// Create viewing matrix
+		this.mView.set(mWorldTransform).invert();
 		
 		// Correct Image Aspect Ratio By Enlarging Image
+		Vector2 camSize = new Vector2((float)sceneCamera.imageSize.x,(float)sceneCamera.imageSize.y);
+		float vAsR = viewportSize.x / viewportSize.y;
+		float camAsR = camSize.x / camSize.y;
+		if (vAsR > camAsR) camSize.mul(vAsR / camAsR , 1);
+		else camSize.mul(1, camAsR / vAsR);
 		
-
 		// Create Projection
-		
+		if (sceneCamera.isPerspective){
+				Matrix4.createPerspective(camSize.x, camSize.y, (float)this.sceneCamera.zPlanes.x, (float)this.sceneCamera.zPlanes.y, mProj);
+		}
+		else{
+			Matrix4.createOrthographic(camSize.x, camSize.y, (float)this.sceneCamera.zPlanes.x, (float)this.sceneCamera.zPlanes.y, mProj);
+
+		}
 		
 		// Set the view projection matrix using the view and projection matrices
-	
+		this.mViewProjection.set(this.mView.mulAfter(mProj));
+		
+		
 		// SOLUTION END
 	}	
 }
